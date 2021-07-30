@@ -1,6 +1,6 @@
 import xml.etree.ElementTree as ET
 
-tree = ET.parse('../jan.vsk')
+tree = ET.parse('jan.vsk')
 root = tree.getroot()
 
 # <Parameter> contains values corresponding to marker locations
@@ -18,7 +18,8 @@ target_set = root[3][0]
 markers = {}
 for x in target_set:
     location_xyz_names = str.split(x.attrib['POSITION'], ' ')
-    location_xyz_values = [marker_xyz.get(location_name.strip('\''), location_name) for location_name in location_xyz_names]
+    location_xyz_values = [marker_xyz.get(location_name.strip('\''), location_name) \
+                           for location_name in location_xyz_names]
     markers[x.attrib['MARKER']] = location_xyz_values
 
 
