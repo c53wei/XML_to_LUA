@@ -1,6 +1,6 @@
 import xml.etree.ElementTree as ET
 
-tree = ET.parse('jan.vsk')
+tree = ET.parse('mIOR.vsk')
 root = tree.getroot()
 
 # <Parameter> contains values corresponding to marker locations
