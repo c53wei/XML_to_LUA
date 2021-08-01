@@ -45,7 +45,6 @@ def add_position_info(root: ET.Element, segment_data: {}):
         # Marker info
         child.attrib['markers'] = segment_data[child.get('NAME')]
         add_position_info(child, segment_data)
-        # print(f'{child.get("NAME")}\t{child.get("__r__")}\t{child.get("__markers__")}')
 
 
 def get_markers(et):
