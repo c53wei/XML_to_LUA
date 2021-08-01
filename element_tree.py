@@ -2,8 +2,11 @@ import xml.etree.ElementTree as ET
 
 from collections import defaultdict
 
+from add_parent import addParentInfo, getParent
+
 tree = ET.parse('jan.vsk')
 root = tree.getroot()
+addParentInfo(tree.getroot())
 
 # <Parameter> section contains xyz components of marker information
 marker_xyz = {}
