@@ -3,7 +3,7 @@ import tree_attributes
 
 from collections import defaultdict
 
-tree = ET.parse('mIOR.vsk')
+tree = ET.parse('data/mIOR.vsk')
 root = tree.getroot()
 
 # <Parameter> section contains xyz components of marker information
