@@ -4,7 +4,7 @@ from collections import defaultdict
 
 from add_parent import addParentInfo, getParent
 
-tree = ET.parse('jan.vsk')
+tree = ET.parse('mIOR.vsk')
 root = tree.getroot()
 addParentInfo(tree.getroot())
 
