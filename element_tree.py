@@ -1,17 +1,15 @@
 import xml.etree.ElementTree as ET
+import tree_attributes
 
 from collections import defaultdict
 
-from add_parent import addParentInfo, getParent
-
 tree = ET.parse('mIOR.vsk')
 root = tree.getroot()
-addParentInfo(tree.getroot())
 
 # <Parameter> section contains xyz components of marker information
 marker_xyz = {}
 for marker_coord in root.findall('.//Parameter'):
-        marker_xyz[marker_coord.get('NAME')] = marker_coord.get('VALUE')
+    marker_xyz[marker_coord.get('NAME')] = marker_coord.get('VALUE')
 
 # <TargetLocalPointToWorldPoint> contains segment and marker data
 segment_marker_data = defaultdict(lambda: defaultdict(dict))
@@ -24,7 +22,9 @@ for marker in root.findall('.//TargetLocalPointToWorldPoint'):
                            for location_name in location_xyz_names]
     segment_marker_data[segment_name][marker_name] = location_xyz_values
 
-
+# Link segment's parent and marker position info to each node
+tree_attributes.add_parent_info(tree.getroot())
+tree_attributes.add_position_info(tree.getroot(), segment_marker_data)
 
 
 
