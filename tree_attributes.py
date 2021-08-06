@@ -1,8 +1,8 @@
 import numpy as np
 import xml.etree.ElementTree as ET
 
-from anthropometrics import calc_anthro
-
+from anthropometrics.getJointAxis import joint_dict
+from anthropometrics.getDeLevaModel import calc_anthro
 
 def add_parent_info(et: ET.Element):
     """
@@ -21,7 +21,7 @@ def strip_parent_info(et: ET.Element):
 
 
 def get_parent(et: ET.Element):
-    if '__parent__' in et.attrib:
+    if 'parent' in et.attrib:
         return et.attrib['parent']
     else:
         return None
@@ -34,16 +34,26 @@ def add_position_info(root: ET.Element, segment_data: {}):
     :param segment_data: Nested dictionary in form {segment_name: {marker_name: [x, y, z]...}
     """
     for child in root.findall('.//Segment'):
-        # Anthropometric info, stub
-        child.attrib['body'] = dict(zip(['mass', 'com', 'inertia'], calc_anthro()))
-
+        body_part = child.get('NAME')
+        # Convert joint position co-ordinates to float
+        joint_coord = np.asfarray(str.split(child[0].get('PRE-POSITION'), ' '), float)
+        try:
+            parent_joint_coord = np.asfarray(str.split(get_parent(child)[0].get('PRE-POSITION'), ' '))
+        except TypeError:
+            print(f'{body_part} does not have a parent segment')
+            parent_joint_coord = np.zeros(3)
+            continue
+        # Anthropometric info
+        segment_length = np.linalg.norm(joint_coord-parent_joint_coord)
+        child.attrib['body'] = dict(zip(['mass', 'com', 'inertia'],
+                                        calc_anthro(body_part=body_part,
+                                                    segment_length=segment_length)))
         # Position info
         child.attrib['joint_frame'] = {}
-        child.attrib['joint_frame']['r'] = child[0].get('PRE-POSITION')
-        child.attrib['joint_frame']['E'] = np.identity(3)  # ToDo: Stub until rotation matrix is verified
-
+        child.attrib['joint_frame']['r'] = joint_coord
+        child.attrib['joint_frame']['E'] = joint_dict.get(child[0].tag)
         # Marker info
-        child.attrib['markers'] = segment_data[child.get('NAME')]
+        child.attrib['markers'] = segment_data[body_part]
         add_position_info(child, segment_data)
 
 

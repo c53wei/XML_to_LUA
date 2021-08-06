@@ -12,5 +12,6 @@ tree_attributes.add_position_info(tree.getroot(), segment_marker_data)
 
 for child in tree.getroot().find('.//Segment'):
     print(f'{child.get("NAME")}\t{child.get("body")}\t{child.get("joint_frame")}\t{child.get("markers")}')
+    # print(f'{child.get("NAME")}\t{child.get("body")}\t{child.get("joint_frame")}\t{child.get("markers")}')
 
 
