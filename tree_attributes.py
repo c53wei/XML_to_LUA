@@ -43,7 +43,6 @@ def add_position_info(root: ET.Element, segment_data: {}):
         except TypeError:
             print(f'{body_part} does not have a parent segment')
             parent_joint_coord = [0.0]*3
-            continue
         # Anthropometric info
         segment_length = np.linalg.norm(np.array(joint_coord)-np.array(parent_joint_coord))
         child.attrib['body'] = dict(zip(['mass', 'com', 'inertia'],
