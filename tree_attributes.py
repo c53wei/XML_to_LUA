@@ -33,28 +33,29 @@ def add_position_info(root: ET.Element, segment_data: {}):
     :param root: Starting point in tree from which marker data exists in
     :param segment_data: Nested dictionary in form {segment_name: {marker_name: [x, y, z]...}
     """
-    for child in root.findall('.//Segment'):
+    for child in root.iter('Segment'):
         body_part = child.get('NAME')
         # Convert joint position co-ordinates to float
-        joint_coord = np.asfarray(str.split(child[0].get('PRE-POSITION'), ' '), float)
+        joint_coord = [float(i) for i in str.split(child[0].get('PRE-POSITION'), ' ')]
         try:
-            parent_joint_coord = np.asfarray(str.split(get_parent(child)[0].get('PRE-POSITION'), ' '))
+            parent_joint_coord = [float(i) for i in str.split(get_parent(child)[0].get('PRE-POSITION'), ' ')]
         except TypeError:
             print(f'{body_part} does not have a parent segment')
-            parent_joint_coord = np.zeros(3)
+            parent_joint_coord = [0.0]*3
             continue
         # Anthropometric info
-        segment_length = np.linalg.norm(joint_coord-parent_joint_coord)
+        segment_length = np.linalg.norm(np.array(joint_coord)-np.array(parent_joint_coord))
         child.attrib['body'] = dict(zip(['mass', 'com', 'inertia'],
                                         calc_anthro(body_part=body_part,
                                                     segment_length=segment_length)))
         # Position info
         child.attrib['joint_frame'] = {}
         child.attrib['joint_frame']['r'] = joint_coord
-        child.attrib['joint_frame']['E'] = joint_dict.get(child[0].tag)
+        child.attrib['joint_frame']['E'] = np.identity(3).tolist()
         # Marker info
         child.attrib['markers'] = segment_data[body_part]
-        add_position_info(child, segment_data)
+        # Joint type
+        child.attrib['joint'] = joint_dict.get(child[0].tag).tolist()
 
 
 def get_markers(et):
