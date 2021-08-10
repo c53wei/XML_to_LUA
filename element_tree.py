@@ -54,10 +54,11 @@ print_tree(root)
 # 
 # test_child = root.findall('.//Segment')[1]
 with open('test.lua', 'w') as file:
+    file.write('return\n')
     for child in root.iter('Segment'):
         file.write('{\n')
         write_segment(file, child)
         file.write('},\n')
-
+    file.write('}')
 regex_format('test.lua')
 
