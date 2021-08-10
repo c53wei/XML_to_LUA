@@ -4,6 +4,7 @@ import xml.etree.ElementTree as ET
 from anthropometrics.getJointAxis import joint_dict
 from anthropometrics.getDeLevaModel import calc_anthro
 
+
 def add_parent_info(et: ET.Element):
     """
     Sets 'reference' to parent node for all children
