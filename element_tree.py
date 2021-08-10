@@ -28,7 +28,7 @@ def replace_square_brackets(filename):
         filedata = file.read()
 
     # Replace the target string
-    filedata = multiple_replace({'[': '{', ']': '}', ':': '=', '\'': ''}, filedata)
+    filedata = multiple_replace({'[': '{', ']': '}', ':': ' =', '\'': ''}, filedata)
 
     # Write the file out again
     with open(filename, 'w') as file:
@@ -44,11 +44,12 @@ print_tree(tree.getroot())
 test_child = tree.getroot().findall('.//Segment')[1]
 with open('test.lua', 'w') as file:
     keys = ['name', 'parent', 'joint_frame', 'body', 'markers', 'joint']
-    values = [test_child.get('NAME'), tree_attributes.get_parent(test_child),
-              ]
-
-    for key, value in test_child.attrib.items():
-        file.write('%s : %s\n' % (key, value))
+    values = [f'"{test_child.get("NAME")}"', f'"{tree_attributes.get_parent(test_child).get("NAME")}"',
+              test_child.get('joint_frame'), test_child.get('body'),
+              dict.__repr__(test_child.get('markers')), test_child.get('joint')]
+    formatted_dict = dict(zip(keys, values))
+    for key, value in formatted_dict.items():
+        file.write('%s : %s,\n' % (key, value))
 
 replace_square_brackets('test.lua')
 
