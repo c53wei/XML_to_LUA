@@ -13,4 +13,4 @@ segment_marker_data = link_segment_to_marker(root)
 tree_attributes.add_position_info(root, segment_marker_data)
 
 # Write LUA
-write_lua('../data/test_2.lua', root)
+write_lua('../data/test.lua', root)
