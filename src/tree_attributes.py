@@ -45,30 +45,23 @@ def add_position_info(root: ET.Element, segment_data: {}):
             parent_joint_coord = [0.0]*3
         # Anthropometric info
         segment_length = np.linalg.norm(np.array(joint_coord)-np.array(parent_joint_coord))
+        child.attrib['length'] = segment_length
         child.attrib['body'] = dict(zip(['mass', 'com', 'inertia'],
                                         calc_anthro(body_part=body_part,
                                                     segment_length=segment_length)))
         # Position info
         child.attrib['joint_frame'] = {}
-        child.attrib['joint_frame']['r'] = joint_coord
-        child.attrib['joint_frame']['E'] = np.identity(3).tolist()
+        child.attrib['joint_frame']['r'] = np.array([joint_coord])
+        child.attrib['joint_frame']['E'] = np.identity(3)
         # Marker info
         child.attrib['markers'] = segment_data[body_part]
         # Joint type
-        child.attrib['joint'] = joint_dict.get(child[0].tag).tolist()
+        child.attrib['joint'] = joint_dict.get(child[0].tag)
 
 
 def get_markers(et):
-    "Gets markers and their positions of a segment"
+    """Gets markers and their positions of a segment"""
     if 'markers' in et.attrib:
         return et.attrib['markers']
-    else:
-        return None
-
-
-def get_r(et):
-    "Gets position relative to parent segment"
-    if 'r' in et.attrib['joint_frame']:
-        return et.attrib['joint_frame']['r']
     else:
         return None
