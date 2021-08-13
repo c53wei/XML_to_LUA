@@ -100,4 +100,3 @@ visuals_dict = {
     },
 
 }
-

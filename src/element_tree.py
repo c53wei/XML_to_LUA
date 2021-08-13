@@ -12,16 +12,5 @@ tree_attributes.add_parent_info(root)
 segment_marker_data = link_segment_to_marker(root)
 tree_attributes.add_position_info(root, segment_marker_data)
 
-# print_tree(root)
-# 
-# test_child = root.findall('.//Segment')[1]
-# with open('../data/test.lua', 'w') as file:
-#     file.write('return\n')
-#     for child in root.iter('Segment'):
-#         file.write('{\n')
-#         write_segment(file, child)
-#         file.write('},\n')
-#     file.write('}')
-# regex_format('../data/test.lua')
-
+# Write LUA
 write_lua('../data/test_2.lua', root)

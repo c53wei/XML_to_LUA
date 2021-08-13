@@ -60,16 +60,8 @@ def add_position_info(root: ET.Element, segment_data: {}):
 
 
 def get_markers(et):
-    "Gets markers and their positions of a segment"
+    """Gets markers and their positions of a segment"""
     if 'markers' in et.attrib:
         return et.attrib['markers']
-    else:
-        return None
-
-
-def get_r(et):
-    "Gets position relative to parent segment"
-    if 'r' in et.attrib['joint_frame']:
-        return et.attrib['joint_frame']['r']
     else:
         return None

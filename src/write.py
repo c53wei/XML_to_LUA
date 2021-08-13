@@ -1,5 +1,4 @@
 # based on ModelFactory by Manish Sreenivasa
-import re
 import numpy as np
 import xml.etree.ElementTree as ET
 
@@ -10,25 +9,25 @@ from visuals import visuals_dict
 
 
 def write_metadata(file):
-    '''write Meta Data'''
-
+    """
+    Write metadata to output file
+    """
     temp_data = 0.0
     file.write('\n')
     file.write('metadata = {')
     file.write('\n  {scaling = "deLeva",')
+    # TODO: Get these values
     file.write('\n  subject_age = {},'.format(1337))
     file.write('\n  subject_height = {},'.format(temp_data))
-    file.write('\n  subject_gender = {},'.format(temp_data))
-    file.write('\n  subject_weight = {},'.format(temp_data))
-    file.write('\n  subject_ankleHeight = {},'.format(temp_data))
+    file.write('\n  subject_sex = {},'.format(temp_data))
+    file.write('\n  subject_mass = {},'.format(temp_data))
     file.write('\n  subject_shoulderWidth = {},'.format(temp_data))
-    file.write('\n  subject_hipCenterWidth = {},'.format(temp_data))
     file.write('\n  subject_AsisDist = {} }},'.format(temp_data))
     file.write('\n},')
 
 
 def write_global_information(file):
-    '''Write global frame information'''
+    """Write global frame information"""
     file.write('\n')
     file.write('gravity = { 0, 0, -9.81,},\n')
     file.write('configuration = {')
@@ -37,37 +36,19 @@ def write_global_information(file):
     file.write('\n  axis_front = { 1, 0, 0,},')
 
 
-def write_animation_settings(file):
-    file.write('\n')
-    file.write('animation_settings = {')
-    file.write('  force_scale = 0.002,\n')
-    file.write('  torque_scale = 0.002,\n')
-    file.write('  force_color = {1., 1., 0.},\n')
-    file.write('  torque_color = {0., 1., 0.},\n')
-    file.write('  force_transparency = 0.0,\n')
-    file.write('  torque_transparency = 0.0,')
-    file.write('\n},')
+def write_lua_matrix(file, matrix, tabnumber):
 
-
-def write_points(file):
-    '''write Contact Points'''
-    file.write('\n')
-    file.write('points = {')
-    file.write('\n},')
-    
-
-def write_lua_matrix(file,matrix, tabnumber):
     N, M = matrix.shape
     if M > 0:
-        for k in range(0,N):
-            for n in range(0,tabnumber):
+        for k in range(0, N):
+            for n in range(0, tabnumber):
                 file.write('  ')
             if k == 0 and N > 1:
                 file.write('{{')
             else:
                 file.write(' {')
-            for j in range (0,M):
-                file.write(' ' + str(matrix[k,j]) + ',')
+            for j in range(0, M):
+                file.write(' ' + str(matrix[k, j]) + ',')
             if k == N-1:
                 if N > 1:
                     file.write('},},')
@@ -78,7 +59,7 @@ def write_lua_matrix(file,matrix, tabnumber):
                 
 
 def write_mesh(file, segment: ET.Element):
-    '''Write Visual Data'''
+    """Write Visual Data"""
 
     segment_name = segment.get('NAME')
     segment_length = segment.get('length')
@@ -96,12 +77,16 @@ def write_mesh(file, segment: ET.Element):
         mesh = segment_visual_dict.get('mesh')
         # Special considerations for certain body parts
         if segment_name in ('Pelvis', 'MiddleTrunk'):
-            dimension = np.multiply(segment_visual_dict.get('size'), [temp_asis_dist, temp_asis_dist, segment_length ])
+            dimension = np.multiply(segment_visual_dict.get('size'),
+                                    [temp_asis_dist, temp_asis_dist, segment_length])
         elif segment_name.__contains__('Foot'):
-            dimension = np.multiply(segment_visual_dict.get('size'), [segment_length, temp_foot_width, segment_length])
-            meshcenter = np.multiply(segment_visual_dict.get('center'), [segment_length/2, segment_length, segment_length])
-        elif segment_name in ('UpperTrunk'):
-            dimension = np.multiply(segment_visual_dict.get('size'), [temp_asis_dist, temp_shoulder_width, segment_length])
+            dimension = np.multiply(segment_visual_dict.get('size'),
+                                    [segment_length, temp_foot_width, segment_length])
+            meshcenter = np.multiply(segment_visual_dict.get('center'),
+                                     [segment_length/2, segment_length, segment_length])
+        elif segment_name is 'UpperTrunk':
+            dimension = np.multiply(segment_visual_dict.get('size'),
+                                    [temp_asis_dist, temp_shoulder_width, segment_length])
     else:
         dimension = np.zeros(3)
         meshcenter = np.zeros(3)
@@ -120,7 +105,7 @@ def write_mesh(file, segment: ET.Element):
 
 
 def write_joint_frame(file, segment: ET.Element):
-    '''write Joint Frame'''
+    """Write Joint Frame"""
     file.write('\n  joint_frame = {')
     file.write('\n    r = ')
     write_lua_matrix(file, segment.get('joint_frame').get('r'), 1)
@@ -140,13 +125,13 @@ def write_body_info(file, segment: ET.Element):
 
 
 def write_markers(file, segment: ET.Element):
-    '''Write Marker Data to Segment'''
+    """Write marker data to segment"""
     file.write('\n  markers = {')
     segment_marker_dict = segment.attrib['markers']
     for marker_name, locations in segment_marker_dict.items():
-            file.write('\n    {} = '.format(marker_name))
-            pos = np.array([locations])
-            write_lua_matrix(file, pos, 0)
+        file.write('\n    {} = '.format(marker_name))
+        pos = np.array([locations])
+        write_lua_matrix(file, pos, 0)
     file.write('\n  },')
 
 
@@ -162,7 +147,7 @@ def write_joint_info(file, segment: ET.Element):
 
 
 def write_frame(file, segment):
-    '''Write one entire frame'''
+    """Write an entire segment to file"""
     file.write('\n  {')
     file.write('\n  name   = "' + segment.get("NAME") + '",')
     file.write('\n  parent = "' + tree_attributes.get_parent(segment).get("NAME", 'ROOT') + '",')
@@ -175,7 +160,7 @@ def write_frame(file, segment):
 
 
 def write_frames(file, root: ET.Element):
-    '''write all Frames'''
+    """Write all segments to frame"""
     file.write('\n')
     file.write('frames = {')
     for segment in root.iter('Segment'):
@@ -183,13 +168,11 @@ def write_frames(file, root: ET.Element):
     file.write('\n},')
 
 
-def write_lua(filepath: str, root : ET.Element):
+def write_lua(filepath: str, root: ET.Element):
     file = open(filepath, 'w')
     file.write('return {')
     write_metadata(file)
     write_global_information(file)
-    write_animation_settings(file)
-    write_points(file)
     write_frames(file, root)
     file.write('\n}')
     file.close()
