@@ -45,6 +45,7 @@ def add_position_info(root: ET.Element, segment_data: {}):
             parent_joint_coord = [0.0]*3
         # Anthropometric info
         segment_length = np.linalg.norm(np.array(joint_coord)-np.array(parent_joint_coord))
+        child.attrib['length'] = segment_length
         child.attrib['body'] = dict(zip(['mass', 'com', 'inertia'],
                                         calc_anthro(body_part=body_part,
                                                     segment_length=segment_length)))
