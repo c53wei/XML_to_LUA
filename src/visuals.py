@@ -1,7 +1,7 @@
 import numpy as np
 
 
-visuals = {
+visuals_dict = {
     'Pelvis': {
         'mesh': 'Pelvis.obj',
         'size': np.array([1.0, 1.2, 1.5]),

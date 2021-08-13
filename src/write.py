@@ -6,6 +6,8 @@ import xml.etree.ElementTree as ET
 import tree_attributes
 
 
+from visuals import visuals_dict
+
 def write_metadata(file):
     '''write Meta Data'''
 
@@ -52,59 +54,36 @@ def write_points(file):
     file.write('points = {')
     file.write('\n},')
 
-def writeMesh(file, segment_name):
+def writeMesh(file, segment: ET.Element):
     '''Write Visual Data'''
-    parse_num = lambda n: float(n.astype('U').replace(',', ''))
-    dimension = np.zeros(3)
-    meshcenter = np.zeros(3)
-    color = np.zeros(3)
-    mesh = 'dummy.obj'
 
-    for visual in self.Visuals:
-        if visual['Body'].astype('U') == segment_name:
-            color[:] = (parse_num(visual['color_r']),
-                        parse_num(visual['color_g']),
-                        parse_num(visual['color_b']))
-            meshcenter[:] = (parse_num(visual['center_x'])
-                             * self.Segment_Length[segment_name],
-                             parse_num(visual['center_y'])
-                             * self.Segment_Length[segment_name],
-                             parse_num(visual['center_z'])
-                             * self.Segment_Length[segment_name])
-            dimension[:] = (parse_num(visual['size_x'])
-                            * self.Segment_Length[segment_name],
-                            parse_num(visual['size_y'])
-                            * self.Segment_Length[segment_name],
-                            parse_num(visual['size_z'].astype('U'))
-                            * self.Segment_Length[segment_name])
-            mesh = visual['Mesh'].astype('U')
-            if segment_name in ('Pelvis', 'MiddleTrunk'):
-                dimension[:] = (parse_num(visual['size_x'])
-                                * self.AsisDist,
-                                parse_num(visual['size_y'])
-                                * self.AsisDist,
-                                parse_num(visual['size_z'])
-                                * self.Segment_Length[segment_name])
-            if segment_name in ('Foot_R', 'Foot_L'):
-                dimension[:] = (parse_num(visual['size_x'])
-                                * self.Segment_Length[segment_name],
-                                parse_num(visual['size_y'])
-                                * self.footWidth,
-                                parse_num(visual['size_z'])
-                                * self.Segment_Length[segment_name])
-                meshcenter[:] = (parse_num(visual['center_x'])
-                                 * self.Segment_Length[segment_name] / 2,
-                                 parse_num(visual['center_y'])
-                                 * self.Segment_Length[segment_name],
-                                 parse_num(visual['center_z'])
-                                 * self.Segment_Length[segment_name])
-            if segment_name in ('UpperTrunk'):
-                dimension[:] = (parse_num(visual['size_x'])
-                                * self.AsisDist,
-                                parse_num(visual['size_y'])
-                                * self.shoulderWidth,
-                                parse_num(visual['size_z'])
-                                * self.Segment_Length[segment_name])
+    segment_name = segment.get('NAME')
+    segment_length = segment.get('length')
+    segment_visual_dict = visuals_dict.get(segment_name)
+    # TODO
+    temp_asis_dist = 5.0
+    temp_foot_width = 5.0
+    temp_shoulder_width = 5.0
+
+    # Work around as we are still missing some data for Shoulder & Hip segments
+    if segment_visual_dict is not None:
+        colour = np.array(segment_visual_dict.get('colour', [0.2, 0.7, 0.3]))
+        dimension = segment_visual_dict.get('size') * segment_length
+        meshcenter = segment_visual_dict.get('center') * segment_length
+        mesh = segment_visual_dict.get('mesh')
+        # Special considerations for certain body parts
+        if segment_name in ('Pelvis', 'MiddleTrunk'):
+            dimension = np.multiply(segment_visual_dict.get('size'), [temp_asis_dist, temp_asis_dist, segment_length ])
+        elif segment_name.__contains__('Foot'):
+            dimension = np.multiply(segment_visual_dict.get('size'), [segment_length, temp_foot_width, segment_length])
+            meshcenter = np.multiply(segment_visual_dict.get('center'), [segment_length/2, segment_length, segment_length])
+        elif segment_name in ('UpperTrunk'):
+            dimension = np.multiply(segment_visual_dict.get('size'), [temp_asis_dist, temp_shoulder_width, segment_length])
+    else:
+        dimension = np.zeros(3)
+        meshcenter = np.zeros(3)
+        colour = np.zeros(3)
+        mesh = 'dummy.obj'
 
     file.write('\n  visuals = {{')
     file.write('\n    src  = "meshes/' + mesh + '",')
@@ -113,7 +92,7 @@ def writeMesh(file, segment_name):
     file.write('\n    mesh_center = ')
     writeLuaMatrix(file, np.reshape(meshcenter, (1, 3)), 1)
     file.write('\n    color       = ')
-    writeLuaMatrix(file, np.reshape(color, (1, 3)), 1)
+    writeLuaMatrix(file, np.reshape(colour, (1, 3)), 1)
     file.write('\n    },},')
 
 
@@ -198,7 +177,7 @@ def writeFrame(file, segment):
     file.write('\n  {')
     file.write('\n  name   = "' + segment_name + '",')
     file.write('\n  parent = "' + parent_name + '",')
-    writeMesh(file, segment_name)
+    writeMesh(file, segment)
     self.writeJointFrame(file, segment_name, parent_name)
     self.writeBodyInfo(file, segment_name)
     self.writeMarkers(file, segment_name)
