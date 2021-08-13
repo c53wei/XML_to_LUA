@@ -51,12 +51,12 @@ def add_position_info(root: ET.Element, segment_data: {}):
                                                     segment_length=segment_length)))
         # Position info
         child.attrib['joint_frame'] = {}
-        child.attrib['joint_frame']['r'] = joint_coord
-        child.attrib['joint_frame']['E'] = np.identity(3).tolist()
+        child.attrib['joint_frame']['r'] = np.array([joint_coord])
+        child.attrib['joint_frame']['E'] = np.identity(3)
         # Marker info
         child.attrib['markers'] = segment_data[body_part]
         # Joint type
-        child.attrib['joint'] = joint_dict.get(child[0].tag).tolist()
+        child.attrib['joint'] = joint_dict.get(child[0].tag)
 
 
 def get_markers(et):

@@ -24,4 +24,4 @@ tree_attributes.add_position_info(root, segment_marker_data)
 #     file.write('}')
 # regex_format('../data/test.lua')
 
-# write_lua('../data/test_2.lua', root)
+write_lua('../data/test_2.lua', root)

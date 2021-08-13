@@ -170,12 +170,11 @@ def calc_anthro(body_part: str, segment_length: float, male: bool=True, body_mas
     try:
         mass = mass_dict.get(body_part, 0) * body_mass
         com = com_dict.get(body_part, 0) * segment_length
-        com = com.tolist()[0]
-        inertia = calc_inertia(r_gyration_dict.get(body_part)[0], segment_length, mass).tolist()
+        inertia = calc_inertia(r_gyration_dict.get(body_part)[0], segment_length, mass)
     except TypeError:
         mass = 0
-        com = 0
-        inertia = 0
+        com = np.zeros([1, 3])
+        inertia = np.zeros([3, 3])
 
     return mass, com, inertia
 
