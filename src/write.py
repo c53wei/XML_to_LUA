@@ -84,7 +84,7 @@ def write_mesh(file, segment: ET.Element):
                                     [segment_length, temp_foot_width, segment_length])
             meshcenter = np.multiply(segment_visual_dict.get('center'),
                                      [segment_length/2, segment_length, segment_length])
-        elif segment_name is 'UpperTrunk':
+        elif segment_name == 'UpperTrunk':
             dimension = np.multiply(segment_visual_dict.get('size'),
                                     [temp_asis_dist, temp_shoulder_width, segment_length])
     else:
