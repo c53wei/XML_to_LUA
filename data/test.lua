@@ -5,8 +5,8 @@ metadata = {
   subject_height = 160,
   subject_sex = female,
   subject_mass = 60,
-  subject_shoulderWidth = 0.0,
-  subject_AsisDist = 0.0 },
+  subject_shoulderWidth = 354.38 mm,
+  subject_AsisDist = 259.22 mm },
 },
 gravity = { 0, 0, -9.81,},
 configuration = {
@@ -19,7 +19,7 @@ frames = {
   parent = "ROOT",
   visuals = {{
     src  = "meshes/Pelvis.obj",
-    dimensions  =    { 5.0, 6.0, 0.0,},
+    dimensions  =    { 0.25922, 0.311064, 0.0,},
     mesh_center =    { 0.0, 0.0, 0.0,},
     color       =    { 0.2, 0.7, 0.3,},
     },},
@@ -57,7 +57,7 @@ frames = {
   parent = "Pelvis",
   visuals = {{
     src  = "meshes/MiddleTrunk.obj",
-    dimensions  =    { 5.0, 6.0, 0.0,},
+    dimensions  =    { 0.25922, 0.311064, 0.0,},
     mesh_center =    { 0.0, 0.0, 0.0,},
     color       =    { 0.2, 0.7, 0.3,},
     },},
@@ -91,7 +91,7 @@ frames = {
   parent = "MiddleTrunk",
   visuals = {{
     src  = "meshes/UpperTrunk.obj",
-    dimensions  =    { 5.0, 5.0, 90.82310507794809,},
+    dimensions  =    { 0.25922, 0.35438, 90.82310507794809,},
     mesh_center =    { 0.0, 0.0, 45.41155253897404,},
     color       =    { 0.2, 0.7, 0.3,},
     },},
@@ -429,7 +429,7 @@ frames = {
   parent = "R_Shank",
   visuals = {{
     src  = "meshes/R_Foot.obj",
-    dimensions  =    { 67.24609579745132, 6.0, 20.173828739235393,},
+    dimensions  =    { 67.24609579745132, 0.09334800000000001, 20.173828739235393,},
     mesh_center =    { 16.81152394936283, 0.0, -13.449219159490264,},
     color       =    { 0.2, 0.7, 0.3,},
     },},
@@ -531,7 +531,7 @@ frames = {
   parent = "L_Shank",
   visuals = {{
     src  = "meshes/L_Foot.obj",
-    dimensions  =    { 58.868393896895135, 6.0, 17.66051816906854,},
+    dimensions  =    { 58.868393896895135, 0.09334800000000001, 17.66051816906854,},
     mesh_center =    { 14.717098474223784, 0.0, -11.773678779379027,},
     color       =    { 0.2, 0.7, 0.3,},
     },},

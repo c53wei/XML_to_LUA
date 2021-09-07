@@ -1,20 +1,30 @@
 import xml.etree.ElementTree as ET
 
 
-def get_subject_attributes(root: ET.Element) -> dict:
+def get_subject_measurements(root: ET.Element) -> {}:
 
     # Initialize attribute dictionary to be returned
-    subject_attributes_dict = {}
+    metadata_dict = {}
+    for child in root.iter('XMPParameter'):
+
+        metadata_dict[child.get('Label')] = child.get('Value')
+    return metadata_dict
+
+
+def get_subject_traits(root: ET.Element) -> {}:
+
+    # Initialize attribute dictionary to be returned
+    traits_dict = {}
     for child in root.iter('StaticParameter'):
 
-        subject_attributes_dict[child.get('NAME')] = child.get('VALUE')
+        traits_dict[child.get('NAME')] = child.get('VALUE')
+    traits_dict ['sex'] = _m0_f1(traits_dict.get('gender_m0_f1'))
 
-    subject_attributes_dict['sex'] = _m0_f1(subject_attributes_dict.get('gender_m0_f1'))
-
-    return subject_attributes_dict
+    return traits_dict
 
 
 def _m0_f1(value: str):
+
     if value is '0':
         return 'male'
     elif value is '1':

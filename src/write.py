@@ -8,7 +8,7 @@ import tree_attributes
 from visuals import visuals_dict
 
 
-def write_metadata(file, subject_attributes: {}):
+def write_metadata(file, subject: {}):
     """
     Write metadata to output file
     """
@@ -16,13 +16,12 @@ def write_metadata(file, subject_attributes: {}):
     file.write('\n')
     file.write('metadata = {')
     file.write('\n  {scaling = "deLeva",')
-    # TODO: Get these values
-    file.write('\n  subject_age = {},'.format(subject_attributes.get('age')))
-    file.write('\n  subject_height = {},'.format(subject_attributes.get('height')))
-    file.write('\n  subject_sex = {},'.format(subject_attributes.get('sex')))
-    file.write('\n  subject_mass = {},'.format(subject_attributes.get('weight')))
-    file.write('\n  subject_shoulderWidth = {},'.format(temp_data))
-    file.write('\n  subject_AsisDist = {} }},'.format(temp_data))
+    file.write('\n  subject_age = {},'.format(subject.get('age')))
+    file.write('\n  subject_height = {},'.format(subject.get('height')))
+    file.write('\n  subject_sex = {},'.format(subject.get('sex')))
+    file.write('\n  subject_mass = {},'.format(subject.get('weight')))
+    file.write('\n  subject_shoulderWidth = {},'.format(subject.get('AC_Width_Average')))
+    file.write('\n  subject_AsisDist = {} }},'.format(subject.get('ASIS_Width_Average')))
     file.write('\n},')
 
 
@@ -58,16 +57,16 @@ def write_lua_matrix(file, matrix, tabnumber):
                 file.write('},\n')
                 
 
-def write_mesh(file, segment: ET.Element):
+def write_mesh(file, segment: ET.Element, subject: {}):
     """Write Visual Data"""
 
     segment_name = segment.get('NAME')
     segment_length = segment.get('length')
     segment_visual_dict = visuals_dict.get(segment_name)
     # TODO
-    temp_asis_dist = 5.0
-    temp_foot_width = 5.0
-    temp_shoulder_width = 5.0
+    asis_dist = float(subject.get('ASIS_Width_Average').split(' ')[0])/1000
+    foot_width = float(subject.get('Foot_Width_Average').split(' ')[0])/1000
+    shoulder_width = float(subject.get('AC_Width_Average').split(' ')[0])/1000
 
     # Work around as we are still missing some data for Shoulder & Hip segments
     if segment_visual_dict is not None:
@@ -78,15 +77,15 @@ def write_mesh(file, segment: ET.Element):
         # Special considerations for certain body parts
         if segment_name in ('Pelvis', 'MiddleTrunk'):
             dimension = np.multiply(segment_visual_dict.get('size'),
-                                    [temp_asis_dist, temp_asis_dist, segment_length])
+                                    [asis_dist, asis_dist, segment_length])
         elif segment_name.__contains__('Foot'):
             dimension = np.multiply(segment_visual_dict.get('size'),
-                                    [segment_length, temp_foot_width, segment_length])
+                                    [segment_length, foot_width, segment_length])
             meshcenter = np.multiply(segment_visual_dict.get('center'),
                                      [segment_length/2, segment_length, segment_length])
         elif segment_name == 'UpperTrunk':
             dimension = np.multiply(segment_visual_dict.get('size'),
-                                    [temp_asis_dist, temp_shoulder_width, segment_length])
+                                    [asis_dist, shoulder_width, segment_length])
     else:
         dimension = np.zeros(3)
         meshcenter = np.zeros(3)
@@ -146,12 +145,12 @@ def write_joint_info(file, segment: ET.Element):
         write_lua_matrix(file, joint, 2)
 
 
-def write_frame(file, segment):
+def write_frame(file, segment, subject):
     """Write an entire segment to file"""
     file.write('\n  {')
     file.write('\n  name   = "' + segment.get("NAME") + '",')
     file.write('\n  parent = "' + tree_attributes.get_parent(segment).get("NAME", 'ROOT') + '",')
-    write_mesh(file, segment)
+    write_mesh(file, segment, subject)
     write_joint_frame(file, segment)
     write_body_info(file, segment)
     write_markers(file, segment)
@@ -159,20 +158,20 @@ def write_frame(file, segment):
     file.write('\n  },')
 
 
-def write_frames(file, root: ET.Element):
+def write_frames(file, root: ET.Element, subject: {}):
     """Write all segments to frame"""
     file.write('\n')
     file.write('frames = {')
     for segment in root.iter('Segment'):
-        write_frame(file, segment)
+        write_frame(file, segment, subject)
     file.write('\n},')
 
 
-def write_lua(filepath: str, root: ET.Element, subject_attributes: {}):
+def write_lua(filepath: str, root: ET.Element, subject: {}):
     file = open(filepath, 'w')
     file.write('return {')
-    write_metadata(file, subject_attributes)
+    write_metadata(file, subject)
     write_global_information(file)
-    write_frames(file, root)
+    write_frames(file, root, subject)
     file.write('\n}')
     file.close()

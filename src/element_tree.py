@@ -9,8 +9,12 @@ from write import write_lua
 
 tree = ET.parse('../data/mIOR.vsk')
 root = tree.getroot()
+
+attribute_tree = ET.parse('../data/mIOR.XMP')
+attribute_root = attribute_tree.getroot()
 # Parse metadata such as age, mass, height, etc.
-subject_attributes = subject_attributes.get_subject_attributes(root)
+subject_values = subject_attributes.get_subject_traits(root)
+subject_values.update(subject_attributes.get_subject_measurements(attribute_root))
 # Link segment's parent and marker position info to each node
 tree_attributes.add_parent_info(root)
 segment_marker_data = link_segment_to_marker(root)
@@ -18,4 +22,4 @@ tree_attributes.add_position_info(root, segment_marker_data)
 
 
 # Write LUA
-write_lua('../data/test.lua', root, subject_attributes)
+write_lua('../data/test.lua', root, subject_values)
