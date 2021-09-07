@@ -18,7 +18,7 @@ subject_values.update(subject_attributes.get_subject_measurements(attribute_root
 # Link segment's parent and marker position info to each node
 tree_attributes.add_parent_info(root)
 segment_marker_data = link_segment_to_marker(root)
-tree_attributes.add_position_info(root, segment_marker_data)
+tree_attributes.add_position_info(root, segment_marker_data, subject_values)
 
 
 # Write LUA

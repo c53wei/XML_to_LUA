@@ -154,17 +154,17 @@ def calc_inertia(radii, length, mass):
     return I
 
 
-def calc_anthro(body_part: str, segment_length: float, male: bool = True, body_mass: float = 65) -> ():
+def calc_anthro(body_part: str, segment_length: float, female: bool = False, body_mass: float = 65) -> ():
     body_part = body_part.lower()
-    if male:
-        mass_dict = dict((k.lower(), v) for k, v in mass_dict_m.items())
-        com_dict = dict((k.lower(), v) for k, v in com_ratios_dict_m.items())
-        r_gyration_dict = dict((k.lower(), v) for k, v in rGyration_ratios_dict_m.items())
-    else:
-        mass_dict = dict((k.lower(), v) for k, v in mass_dict_f.items())
+    # Normalize mass coefficient (male 73 kg, female 61.9 kg)
+    if female:
+        mass_dict = dict((k.lower(), v/61.9) for k, v in mass_dict_f.items())
         com_dict = dict((k.lower(), v) for k, v in com_ratios_dict_f.items())
         r_gyration_dict = dict((k.lower(), v) for k, v in rGyration_ratios_dict_f.items())
-
+    else:
+        mass_dict = dict((k.lower(), v/73.0) for k, v in mass_dict_m.items())
+        com_dict = dict((k.lower(), v) for k, v in com_ratios_dict_m.items())
+        r_gyration_dict = dict((k.lower(), v) for k, v in rGyration_ratios_dict_m.items())
     try:
         mass = mass_dict.get(body_part, 0) * body_mass
         com = com_dict.get(body_part, 0) * segment_length

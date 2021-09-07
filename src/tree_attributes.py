@@ -28,7 +28,7 @@ def get_parent(et: ET.Element):
         return None
 
 
-def add_position_info(root: ET.Element, segment_data: {}):
+def add_position_info(root: ET.Element, segment_data: {}, subject_data):
     """
     Sets marker and joint frame position vector relative to parent segment
     :param root: Starting point in tree from which marker data exists in
@@ -48,7 +48,10 @@ def add_position_info(root: ET.Element, segment_data: {}):
         child.attrib['length'] = segment_length
         child.attrib['body'] = dict(zip(['mass', 'com', 'inertia'],
                                         calc_anthro(body_part=body_part,
-                                                    segment_length=segment_length)))
+                                                    segment_length=segment_length,
+                                                    female=bool(subject_data.get('gender_m0_f1')),
+                                                    body_mass=float(subject_data.get('weight'))
+                                                    )))
         # Position info
         child.attrib['joint_frame'] = {}
         child.attrib['joint_frame']['r'] = np.array([joint_coord])

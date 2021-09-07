@@ -63,7 +63,7 @@ def write_mesh(file, segment: ET.Element, subject: {}):
     segment_name = segment.get('NAME')
     segment_length = segment.get('length')
     segment_visual_dict = visuals_dict.get(segment_name)
-    # TODO
+    # Convert mm to m
     asis_dist = float(subject.get('ASIS_Width_Average').split(' ')[0])/1000
     foot_width = float(subject.get('Foot_Width_Average').split(' ')[0])/1000
     shoulder_width = float(subject.get('AC_Width_Average').split(' ')[0])/1000
