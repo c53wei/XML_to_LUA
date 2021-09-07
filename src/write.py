@@ -8,7 +8,7 @@ import tree_attributes
 from visuals import visuals_dict
 
 
-def write_metadata(file):
+def write_metadata(file, subject_attributes: {}):
     """
     Write metadata to output file
     """
@@ -17,10 +17,10 @@ def write_metadata(file):
     file.write('metadata = {')
     file.write('\n  {scaling = "deLeva",')
     # TODO: Get these values
-    file.write('\n  subject_age = {},'.format(1337))
-    file.write('\n  subject_height = {},'.format(temp_data))
-    file.write('\n  subject_sex = {},'.format(temp_data))
-    file.write('\n  subject_mass = {},'.format(temp_data))
+    file.write('\n  subject_age = {},'.format(subject_attributes.get('age')))
+    file.write('\n  subject_height = {},'.format(subject_attributes.get('height')))
+    file.write('\n  subject_sex = {},'.format(subject_attributes.get('sex')))
+    file.write('\n  subject_mass = {},'.format(subject_attributes.get('weight')))
     file.write('\n  subject_shoulderWidth = {},'.format(temp_data))
     file.write('\n  subject_AsisDist = {} }},'.format(temp_data))
     file.write('\n},')
@@ -168,10 +168,10 @@ def write_frames(file, root: ET.Element):
     file.write('\n},')
 
 
-def write_lua(filepath: str, root: ET.Element):
+def write_lua(filepath: str, root: ET.Element, subject_attributes: {}):
     file = open(filepath, 'w')
     file.write('return {')
-    write_metadata(file)
+    write_metadata(file, subject_attributes)
     write_global_information(file)
     write_frames(file, root)
     file.write('\n}')

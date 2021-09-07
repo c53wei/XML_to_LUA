@@ -65,3 +65,4 @@ def get_markers(et):
         return et.attrib['markers']
     else:
         return None
+

@@ -2,7 +2,6 @@
 
 import numpy as np
 
-# TODO: Missing values for R & L Hip and Shoulder
 mass_dict_m = {"Pelvis": 0.1117,
                "R_Thigh": 0.1416,
                "L_Thigh": 0.1416,
