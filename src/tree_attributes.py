@@ -46,11 +46,12 @@ def add_position_info(root: ET.Element, segment_data: {}, subject_data):
         # Anthropometric info
         segment_length = np.linalg.norm(np.array(joint_coord)-np.array(parent_joint_coord))
         child.attrib['length'] = segment_length
+        mass = subject_data.get('weight')
         child.attrib['body'] = dict(zip(['mass', 'com', 'inertia'],
                                         calc_anthro(body_part=body_part,
                                                     segment_length=segment_length,
                                                     female=bool(subject_data.get('gender_m0_f1')),
-                                                    body_mass=float(subject_data.get('weight'))
+                                                    body_mass=float(mass) if mass else 65
                                                     )))
         # Position info
         child.attrib['joint_frame'] = {}

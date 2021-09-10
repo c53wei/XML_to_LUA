@@ -25,9 +25,9 @@ def get_subject_traits(root: ET.Element) -> {}:
 
 def _m0_f1(value: str):
 
-    if value is '0':
+    if value == '0':
         return 'male'
-    elif value is '1':
+    elif value == '1':
         return 'female'
     else:
         return None
