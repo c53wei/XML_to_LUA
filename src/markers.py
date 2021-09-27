@@ -23,6 +23,6 @@ def link_segment_to_marker(root: ET.Element) -> defaultdict:
         location_xyz_names = str.split(marker.get('POSITION'), ' ')
         location_xyz_values = [marker_xyz.get(location_name.strip('\''), location_name) \
                                for location_name in location_xyz_names]
-        segment_marker_data[segment_name][marker_name] = location_xyz_values
+        segment_marker_data[segment_name][marker_name] = [float(x)/1000 for x in location_xyz_values]  #TODO: Units
 
     return segment_marker_data

@@ -37,9 +37,9 @@ def add_position_info(root: ET.Element, segment_data: {}, subject_data):
     for child in root.iter('Segment'):
         body_part = child.get('NAME')
         # Convert joint position co-ordinates to float
-        joint_coord = [float(i) for i in str.split(child[0].get('PRE-POSITION'), ' ')]
+        joint_coord = [float(i)/1000 for i in str.split(child[0].get('PRE-POSITION'), ' ')]  # TODO: Units
         try:
-            parent_joint_coord = [float(i) for i in str.split(get_parent(child)[0].get('PRE-POSITION'), ' ')]
+            parent_joint_coord = [float(i)/1000 for i in str.split(get_parent(child)[0].get('PRE-POSITION'), ' ')]
         except TypeError:
             print(f'{body_part} does not have a parent segment')
             parent_joint_coord = [0.0]*3
