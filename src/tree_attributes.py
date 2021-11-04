@@ -12,6 +12,8 @@ def add_parent_info(et: ET.Element):
     """
     for child in et:
         child.attrib['parent'] = et
+        if 'child' not in et.attrib and child.tag == 'Segment':
+            et.attrib['child'] = child
         add_parent_info(child)
 
 
@@ -22,10 +24,11 @@ def strip_parent_info(et: ET.Element):
 
 
 def get_parent(et: ET.Element):
-    if 'parent' in et.attrib:
-        return et.attrib['parent']
-    else:
-        return None
+    return et.attrib.get('parent', None)
+
+
+def get_child(et: ET.Element):
+    return et.attrib.get('child', None)
 
 
 def add_position_info(root: ET.Element, segment_data: {}, subject_data):
@@ -34,33 +37,34 @@ def add_position_info(root: ET.Element, segment_data: {}, subject_data):
     :param root: Starting point in tree from which marker data exists in
     :param segment_data: Nested dictionary in form {segment_name: {marker_name: [x, y, z]...}
     """
-    for child in root.iter('Segment'):
-        body_part = child.get('NAME')
+    for parent in root.iter('Segment'):
+        body_part = parent.get('NAME')
         # Convert joint position co-ordinates to float
-        joint_coord = [float(i)/1000 for i in str.split(child[0].get('PRE-POSITION'), ' ')]  # TODO: Units
+        joint_coord = [float(i)/1000 for i in str.split(parent[0].get('PRE-POSITION'), ' ')]
+        child = get_child(parent)
         try:
-            parent_joint_coord = [float(i)/1000 for i in str.split(get_parent(child)[0].get('PRE-POSITION'), ' ')]
+            child_joint_coord = [float(i)/1000 for i in str.split(child[0].get('PRE-POSITION'), ' ')]
         except TypeError:
-            print(f'{body_part} does not have a parent segment')
-            parent_joint_coord = [0.0]*3
+            print(f'{body_part} does not have a child segment')
+            child_joint_coord = [0.0]*3
         # Anthropometric info
-        segment_length = np.linalg.norm(np.array(joint_coord)-np.array(parent_joint_coord))
-        child.attrib['length'] = segment_length
+        segment_length = np.linalg.norm(np.array(joint_coord)-np.array(child_joint_coord))
+        parent.attrib['length'] = segment_length
         mass = subject_data.get('weight')
-        child.attrib['body'] = dict(zip(['mass', 'com', 'inertia'],
+        parent.attrib['body'] = dict(zip(['mass', 'com', 'inertia'],
                                         calc_anthro(body_part=body_part,
                                                     segment_length=segment_length,
                                                     female=bool(subject_data.get('gender_m0_f1')),
                                                     body_mass=float(mass) if mass else 65
                                                     )))
         # Position info
-        child.attrib['joint_frame'] = {}
-        child.attrib['joint_frame']['r'] = np.array([joint_coord])
-        child.attrib['joint_frame']['E'] = np.identity(3)
+        parent.attrib['joint_frame'] = {}
+        parent.attrib['joint_frame']['r'] = np.array([joint_coord])
+        parent.attrib['joint_frame']['E'] = np.identity(3)
         # Marker info
-        child.attrib['markers'] = segment_data[body_part]
+        parent.attrib['markers'] = segment_data[body_part]
         # Joint type
-        child.attrib['joint'] = joint_dict.get(child[0].tag)
+        parent.attrib['joint'] = joint_dict.get(parent[0].tag)
 
 
 def get_markers(et):

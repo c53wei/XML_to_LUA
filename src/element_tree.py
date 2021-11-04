@@ -7,7 +7,7 @@ from markers import link_segment_to_marker
 from write import write_lua
 
 
-tree = ET.parse('../data/lukas.vsk')
+tree = ET.parse('../data/mIOR.vsk')
 root = tree.getroot()
 
 attribute_tree = ET.parse('../data/mIOR.XMP')
@@ -22,4 +22,9 @@ tree_attributes.add_position_info(root, segment_marker_data, subject_values)
 
 
 # Write LUA
-write_lua('../data/lukas.lua', root, subject_values)
+write_lua('../data/test.lua', root, subject_values)
+
+# for parent in root.iter('Segment'):
+#     print(f"Parent: {parent.get('NAME')}")
+#     if parent.get('child'):
+#         print(f"Child: {parent.get('child').get('NAME')}")
