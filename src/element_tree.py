@@ -22,7 +22,7 @@ tree_attributes.add_position_info(root, segment_marker_data, subject_values)
 
 
 # Write LUA
-write_lua('../data/test.lua', root, subject_values)
+write_lua('../data/mIOR.lua', root, subject_values)
 
 for parent in root.iter('Segment'):
     print(f"Parent: {parent.get('NAME')}")

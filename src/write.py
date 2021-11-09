@@ -32,7 +32,7 @@ def write_global_information(file):
     file.write('configuration = {')
     file.write('\n  axis_right = { 0, 1, 0,},')
     file.write('\n  axis_up = { 0, 0, 1,},')
-    file.write('\n  axis_front = { 1, 0, 0,},')
+    file.write('\n  axis_front = { 1, 0, 0,}},')
 
 
 def write_lua_matrix(file, matrix, tabnumber):

@@ -5,14 +5,14 @@ metadata = {
   subject_height = 160,
   subject_sex = female,
   subject_mass = 60,
-  subject_shoulderWidth = 354.38 mm,
-  subject_AsisDist = 259.22 mm },
+  subject_shoulderWidth = 354.38,
+  subject_AsisDist = 259.22 },
 },
 gravity = { 0, 0, -9.81,},
 configuration = {
   axis_right = { 0, 1, 0,},
   axis_up = { 0, 0, 1,},
-  axis_front = { 1, 0, 0,},
+  axis_front = { 1, 0, 0,}},
 frames = {
   {
   name   = "Pelvis",
