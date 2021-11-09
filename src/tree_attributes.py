@@ -15,6 +15,13 @@ def add_parent_info(et: ET.Element):
         if 'child' not in et.attrib and child.tag == 'Segment':
             et.attrib['child'] = child
         add_parent_info(child)
+     
+        
+def add_pelvis_info(pelvis: ET.Element):
+    """Middle trunk is a fake segment. Pelvis' 'real' child is uppertrunk"""
+    middle_trunk = pelvis.attrib['child'] 
+    pelvis.attrib['child'] = middle_trunk.attrib['child']
+    
 
 
 def strip_parent_info(et: ET.Element):
@@ -39,6 +46,8 @@ def add_position_info(root: ET.Element, segment_data: {}, subject_data):
     """
     for parent in root.iter('Segment'):
         body_part = parent.get('NAME')
+        if body_part == 'Pelvis':
+            add_pelvis_info(parent)
         # Convert joint position co-ordinates to float
         joint_coord = [float(i)/1000 for i in str.split(parent[0].get('PRE-POSITION'), ' ')]
         child = get_child(parent)
